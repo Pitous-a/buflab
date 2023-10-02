@@ -5,14 +5,15 @@
 # "0x3b1a3827"
 
 #level 0 (smoke)
-# cat smoke.txt | ./hex2raw | ./bufbomb -u 631907060609;
+# cat "./level0(smoke)/smoke.txt" | ./hex2raw | ./bufbomb -u 631907060609;
 
 #level 1 (fizz)
-# cat fizz.txt | ./hex2raw | ./bufbomb -u 631907060609;
+# cat "./level1(fizz)/fizz.txt" | ./hex2raw | ./bufbomb -u 631907060609;
 
 #level 2 (bang)
 # gcc -m32 -c "./level2(bang)/attack.S" -o "./level2(bang)/attack.o";
 # objdump -d "./level2(bang)/attack.o" > "./level2(bang)/attack.d";
+# ./hex2raw < "./level2(bang)/bang.txt" > "./level2(bang)/bang-row.txt";
 # cat "./level2(bang)/bang.txt" | ./hex2raw | ./bufbomb -u 631907060609;
 
 #level 3 (rumble)

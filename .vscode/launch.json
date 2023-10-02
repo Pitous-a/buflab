@@ -5,7 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) 启动",
+            "name": "bang",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/bufbomb",
+            "args": ["-u", "631907060609"],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            // "setupCommands": [
+            //     {
+            //         "text": "set disassembly-flavor intel",
+            //         "description": "gdb 启用 intel 汇编",
+            //         "ignoreFailures": true
+            //     },
+            // ],
+        },
+        {
+            "name": "rumble",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/bufbomb",
@@ -15,13 +34,6 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "为 gdb 启用整齐打印",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-            ],
         }
     ]
 }
