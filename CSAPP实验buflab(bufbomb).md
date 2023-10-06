@@ -186,12 +186,12 @@ void smoke()
 
  1. 将bufbomb可执行文件使用objdump进行反汇编`objdump -d bufbomb >bufbomb .d`
  2. 在bufbombd文件中找到getbuf函数
-    ![请添加图片描述](https://img-blog.csdnimg.cn/92eea0bab9c74ead90aa920709ff2c3b.png)
+    ![请添加图片描述](https://img-blog.csdnimg.cn/92eea0bab9c74ead90aa920709ff2c3b.png =x200)
     在这里我们可以看到其中的`lea    -0x67(%ebp),%eax`指令的作用是指定缓冲区的大小，这里的`0x67`是16进制，所以缓冲区的大小就是103个字节。 
  3. 因为我们的目标是当 getbuf 过程执行它的 return 语句后，使 bufbomb 程序执行smoke过程的代码，所以我们需要覆盖掉getbuf栈帧的ret返回地址。找到smoke函数的入口地址为`0x080493d5`。
-![请添加图片描述](https://img-blog.csdnimg.cn/246bba6ae7354c608ab56e10ee401409.png)
+![请添加图片描述](https://img-blog.csdnimg.cn/246bba6ae7354c608ab56e10ee401409.png =x250)
  4. 因为执行到getbuf时的栈帧中ebp+4存储的是test函数的ebp，而ebp+8为test的返回地址，所以我们需要在填满整个缓冲区后再覆盖掉8个字节，从而覆盖掉返回地址（小端存储）。
-        ![请添加图片描述](https://img-blog.csdnimg.cn/23540dba28484df3a44f04c271421fef.png)
+        ![请添加图片描述](https://img-blog.csdnimg.cn/23540dba28484df3a44f04c271421fef.png =x400)
  5. 最后执行命令`cat "./level0(smoke)/smoke.txt" | ./hex2raw | ./bufbomb -u 631907060609;`成功过关！
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/a72efa1cc3434c8db9704730b6d05946.png)
 ## Level 1: fizz 
@@ -219,7 +219,7 @@ void fizz(int val)
  1. 找到fizz函数的入口地址
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/57019347197f422aadadca1c4565f042.png)
     与level 0相似，攻击字符串需要将getbuf的ret返回地址覆盖为fizz函数的入口地址`0x08049402`
- 2. 因为fizz的参数地址为`fizz的ebp+8`，而因为我们执行fizz是通过ret语句跳转执行，也就是在getbuf执行leave和ret后的栈帧为调用fizz的栈帧，所以`fizz的ebp+8`对应到getbuf中`103+4（test的ebp）+4（getbuf的ret）+4（fizz的ret）+4（fizz的参数）`，其中fizz的参数需要替换为cookie值（小端方式），可以使用`./makecookie 631907060609`查看， 我这里是`0x3b1a3827`。![在这里插入图片描述](https://img-blog.csdnimg.cn/cb1234649f474fe682a6b66cd2800c2c.png)
+ 2. 因为fizz的参数地址为`fizz的ebp+8`，而因为我们执行fizz是通过ret语句跳转执行，也就是在getbuf执行leave和ret后的栈帧为调用fizz的栈帧，所以`fizz的ebp+8`对应到getbuf中`103+4（test的ebp）+4（getbuf的ret）+4（fizz的ret）+4（fizz的参数）`，其中fizz的参数需要替换为cookie值（小端方式），可以使用`./makecookie 631907060609`查看， 我这里是`0x3b1a3827`。![在这里插入图片描述](https://img-blog.csdnimg.cn/cb1234649f474fe682a6b66cd2800c2c.png =x400)
 
  3. 执行命令`cat "./level1(fizz)/fizz.txt" | ./hex2raw | ./bufbomb -u 631907060609;`成功过关！![在这里插入图片描述](https://img-blog.csdnimg.cn/c4f5605dc7b54dff8a0270b76b37fc8b.png)
 ## Level 2: bang 
@@ -246,19 +246,19 @@ void bang(int val)
 
 **解答**
 
- 1. 要执行攻击代码，必须先确定`攻击代码的起始地址`。我们知道getbuf缓冲区的大小是103个字节，那么可以使用该`缓冲区的首地址`作为攻击代码的起始地址。要获取到缓冲区的起始地址，就需要使用GDB调试工具。![在这里插入图片描述](https://img-blog.csdnimg.cn/e2e7b43eb108432787a23a5e353ee3cd.png)
+ 1. 要执行攻击代码，必须先确定`攻击代码的起始地址`。我们知道getbuf缓冲区的大小是103个字节，那么可以使用该`缓冲区的首地址`作为攻击代码的起始地址。要获取到缓冲区的起始地址，就需要使用GDB调试工具。![在这里插入图片描述](https://img-blog.csdnimg.cn/e2e7b43eb108432787a23a5e353ee3cd.png =x400)
     > 这里使用VSCode的调试功能（需要安装C/C++扩展），配置`launch.json`文件，这里详细说明一下，后面也会用到。其中`program`配置的是你的bufbomb可执行文件路径。`args`是启动时的参数，这里的`"args":["-u","631907060609"]`就相当于执行`./bufbomb
     -u 631907060609`。`"MIMode":"gdb"`就是指定调试工具为gdb。这里的`set disassembly-flavor
     intel`是指定反汇编视图的汇编风格为Intel，默认情况是AT&T风格，这个看自己喜好，我就使用的默认AT&T汇编。
     
-    在VSCode的调试功能指定断点为getbuf函数，然后在调用堆栈里打开反汇编视图（超赞!），在监视窗口添加表达式`$ebp-0x67`，可以看到`0x55682f29`就是缓冲区的首地址。![在这里插入图片描述](https://img-blog.csdnimg.cn/d256d5cb996c4728b87492dff0cb1529.png)
- 2. 找到攻击代码的起始地址后，现在我们需要找到bang函数的入口地址和global_value的值。
-    ![在这里插入图片描述](https://img-blog.csdnimg.cn/4ce4ca64af624f668839e998b2f2de0d.png)
+    在VSCode的调试功能指定断点为getbuf函数，然后在调用堆栈里打开反汇编视图（超赞!），在监视窗口添加表达式`$ebp-0x67`，可以看到`0x55682f29`就是缓冲区的首地址。![在这里插入图片描述](https://img-blog.csdnimg.cn/d256d5cb996c4728b87492dff0cb1529.png =x400)
+ 2. 找到攻击代码的起始地址后，现在我们需要找到bang函数的入口地址和global_value的地址。
+    ![在这里插入图片描述](https://img-blog.csdnimg.cn/4ce4ca64af624f668839e998b2f2de0d.png =x400)
     
     不难看出bang的入口地址为`0x08049453`，global_value对应的内存地址为`0x804d1a8`(对应printf函数的参数)。
  3. 现在我们需要构造一个攻击代码。 新建`attack.S`文件:
 
-    ```c
+	```c
 	movl $0x3b1a3827,0x804d1a8
 	push $0x08049453
 	ret
@@ -275,10 +275,16 @@ void bang(int val)
 	Disassembly of section .text:
 	00000000 <.text>:
 	   0:	c7 05 a8 d1 04 08 27 	movl   $0x3b1a3827,0x804d1a8
-	   7:	38 1a 3b 
+	   7:	38 1a 3b
 	   a:	68 53 94 04 08       	push   $0x8049453
 	   f:	c3                   	ret    
 	```
+
+ 4. 将得到的机器码写入缓冲区中，将返回地址覆盖为缓冲区数组的起始地址（仍然使用小端方式）。
+    ![在这里插入图片描述](https://img-blog.csdnimg.cn/c94a5d1ec9a14e6db14ed8172820d19f.png =x400)
+    最后执行命令`cat "./level2(bang)/bang.txt" | ./hex2raw | ./bufbomb -u
+    631907060609;`成功过关！
+    ![在这里插入图片描述](https://img-blog.csdnimg.cn/dfc5dce756fc41a3a6d6debc76679d52.png)
 
 ## Level 3: rumble 
 与前一级别相同，本级别实验需要在攻击字符串中包含实际的机器指令以实现改写原返回地址指针、执行特定的攻击行为等目标。与前一级别不同之处是，本级别需要在攻击字符串中包含准备和传递过程调用参数的指令，注意所传递参数与攻击字符串一样将占用栈中的存储空间。 
@@ -302,4 +308,20 @@ void rumble(char *str)
 >  - 可以使用 OBJDUMP 工具分析被调用过程 eval2equal    的执行逻辑（可集中注意力于自`sprintf`过程调用及其参数压栈开始的指令，其前的多数指令与随机数的生成和使用有关——与本实验级别的主要目的关系不大），以获得传递参数的正确取值，从而构造满足实验目标的攻击字符串
 >  - 如前一级别实验，你可以使用一些工具来帮助进行指令的字节编码（可参考本文档最后的示例说明），并通过向栈中压入地址并使用 ret    指令来实现跳转
 >  - 在栈中合理安排调用参数的值的存储空间
+
+**解答**
+
+ 1. 我们攻击代码的起始地址与bang过程一样，依然是缓冲区的起始地址`0x55682f29`，将其写入攻击字符串中。
+    ![在这里插入图片描述](https://img-blog.csdnimg.cn/3d43f9ffb7a04164adbe87aab6490971.png =x300)
+ 2. 执行命令
+
+	```c
+	./hex2raw < "./level3(rumble)/rumble.txt" > "./level3(rumble)/rumble-row.txt";
+	```
+    将攻击字符串的二进制字节序列存于文件rumble-row.txt中，这一步是为了便于接下来的GDB调试。
+
+在bufbomb.d中找到rumble函数的入口地址
+![在这里插入图片描述](https://img-blog.csdnimg.cn/623fa7b5917f4cd884efff68b3e7b375.png)
+
+然后构造一个攻击代码`attack.S`:
 

@@ -26,3 +26,10 @@
 # 方案二
 # ./hex2raw < "./level3(rumble)/rumble.txt" > "./level3(rumble)/rumble-row.txt";
 # ./bufbomb -u 631907060609 < "./level3(rumble)/rumble-row.txt";
+
+#level 4 (boom)
+# gcc -m32 -c "./level4(boom)/attack.S" -o "./level4(boom)/attack.o";
+# objdump -d "./level4(boom)/attack.o" > "./level4(boom)/attack.d";
+
+# ./hex2raw < "./level4(boom)/boom.txt" > "./level4(boom)/boom-row.txt";
+# ./bufbomb -u 631907060609 < "./level4(boom)/boom-row.txt";

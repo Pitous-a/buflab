@@ -34,6 +34,24 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+        },
+        {
+            "name": "boom",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/bufbomb",
+            "args": ["-u", "631907060609","<","${workspaceRoot}/level4(boom)/boom-row.txt"],
+            "cwd": "${fileDirname}",
+            "MIMode": "gdb",
+        },
+        {
+            "name": "kaboom",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/bufbomb",
+            "args": ["-u", "631907060609","-n","<","${workspaceRoot}/level4(kaboom)/kaboom-row.txt"],
+            "cwd": "${fileDirname}",
+            "MIMode": "gdb",
         }
     ]
 }
