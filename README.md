@@ -5,6 +5,13 @@
 >  1. 实验环境：Linux i386
 >  2. 实验语言：汇编
 
+# 实验准备
+
+ 1. **VScode（宇宙第一编辑器！）**
+ 2.  WSL下的Ubuntu22.04（虚拟机环境）
+ 3.  虚拟机安装i386
+ 4.  GDB调试环境 
+ 5. ~~作案工具和攻击代码~~ [(github)bufbomb相关工具以及实验代码](https://github.com/Pitous-a/buflab)
 # 实验数据
 
 在本实验中，每位学生应从下列链接下载包含本实验相关文件的一个 tar 文件： 
@@ -124,15 +131,6 @@ Type string:Smoke!: You called smoke()
 VALID 
 NICE JOB!
 ```
-
-# 实验准备
-
- 1. **VScode（宇宙第一编辑器！）**
- 2.  WSL下的Ubuntu22.04（虚拟机环境）
- 3.  虚拟机安装i386
- 4.  GDB调试环境 
- 5. ~~作案工具和攻击代码~~ [(github)bufbomb相关工具以及实验代码](https://github.com/Pitous-a/buflab)
-
 # 实验内容
 
 > 注意：以下实验内容每个人产生的汇编语言和地址大小是不同的！
@@ -211,6 +209,7 @@ void smoke()
 	```
 
  5. 最后执行命令`cat "./level0(smoke)/smoke.txt" | ./hex2raw | ./bufbomb -u 631907060609;`成功过关！
+    
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/e7ad6ed480b648ed8da12f35f96c3c29.png)
 ## Level 1: fizz 
 在 bufbomb 程序中有一个 fizz 过程，其代码如下： 
