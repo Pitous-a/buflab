@@ -1,4 +1,18 @@
-﻿@[TOC](计算机操作系统buflab实验)
+﻿- [实验介绍](#实验介绍)
+- [实验准备](#实验准备)
+- [实验数据](#实验数据)
+	- [目标程序 bufbomb 说明](#目标程序-bufbomb-说明)
+	- [工具程序 hex2raw 说明](#工具程序-hex2raw-说明)
+	- [工具程序 makecookie 说明](#工具程序-makecookie-说明)
+- [测试攻击字符串](#测试攻击字符串)
+- [实验内容](#实验内容)
+	- [Level 0: smoke](#level-0-smoke)
+	- [Level 1: fizz](#level-1-fizz)
+	- [Level 2: bang](#level-2-bang)
+	- [Level 3: rumble](#level-3-rumble)
+	- [Level 4: boom](#level-4-boom)
+	- [Level 5: kaboom](#level-5-kaboom)
+
 # 实验介绍
 
 本实验的目的在于加深对 IA-32 过程调用规则和栈结构的具体理解。实验的主要内容是对一个可执行程序“bufbomb”实施一系列缓冲区溢出攻击（buffer overflow attacks），也就是设法通过造成缓冲区溢出来改变该程序的运行内存映像（例如将专门设计的字节序列插入到栈中特定内存位置）和行为，以实现实验预定的目标。实验中你需要针对目标可执行程序 bufbomb，分别完成多个难度递增的缓冲区溢出攻击（完成的顺序没有固定要求）。按从易到难的顺序，这些难度级分别命名为 smoke (level 0)、fizz (level 1)、bang (level 2)、rumble (level 3)、boom (level 4) 和 kaboom (level 5)。 
