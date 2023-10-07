@@ -4,6 +4,9 @@
 # ./makecookie 631907060609 
 # "0x3b1a3827"
 
+#反汇编bufbomb
+# objdump -d bufbomb > bufbomb.d
+
 #level 0 (smoke)
 # cat "./level0(smoke)/smoke.txt" | ./hex2raw | ./bufbomb -u 631907060609;
 
@@ -33,3 +36,10 @@
 
 # ./hex2raw < "./level4(boom)/boom.txt" > "./level4(boom)/boom-row.txt";
 # ./bufbomb -u 631907060609 < "./level4(boom)/boom-row.txt";
+
+#level 5 (kaboom)
+# gcc -m32 -c "./level5(kaboom)/attack.S" -o "./level5(kaboom)/attack.o";
+# objdump -d "./level5(kaboom)/attack.o" > "./level5(kaboom)/attack.d";
+
+# ./hex2raw -n < "./level5(kaboom)/kaboom.txt" > "./level5(kaboom)/kaboom-row.txt";
+# ./bufbomb -n -u 631907060609 < "./level5(kaboom)/kaboom-row.txt";

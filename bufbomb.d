@@ -431,7 +431,7 @@ Disassembly of section .text:
  8049460:	a1 a0 d1 04 08       	mov    0x804d1a0,%eax
  8049465:	39 c2                	cmp    %eax,%edx
  8049467:	75 25                	jne    804948e <bang+0x3b>
- 8049469:	a1 a8 d1 04 08       	mov    0x804d1a8,%eax 
+ 8049469:	a1 a8 d1 04 08       	mov    0x804d1a8,%eax
  804946e:	83 ec 08             	sub    $0x8,%esp
  8049471:	50                   	push   %eax
  8049472:	68 a0 b0 04 08       	push   $0x804b0a0
