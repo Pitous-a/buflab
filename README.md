@@ -40,8 +40,7 @@
 
 bufbomb 程序接受下列命令行参数： 
 
- - -u userid：以给定的用户 ID“userid”（本实验中应设为本慕课号“0809NJU064”） 运行程序。在每次运行程序时均应指定该参数，因为 bufbomb 程序将基于该 ID 决 定你应该使用的 cookie 值（与
-   makecookie 程序的输出相同），而 bufbomb 程序 运行时的一些关键栈地址取决于该 cookie 值。
+ - -u userid：以给定的用户 ID“userid”（本实验中应设为本慕课号“0809NJU064”） 运行程序。在每次运行程序时均应指定该参数，因为 bufbomb 程序将基于该 ID 决 定你应该使用的 cookie 值（与makecookie 程序的输出相同），而 bufbomb 程序 运行时的一些关键栈地址取决于该 cookie 值。
 
  - -h：打印可用命令行参数列表
 
